@@ -11,12 +11,15 @@ public class Main {
         String  pdfURL         = null;
         String  savePath       = URLDownloader.getDefaultFilePath();
         boolean openFirstImage = false;
+        int     dpi            = 300;
 
         for (String arg : args) {
             if (arg.equalsIgnoreCase("--open")) {
                 openFirstImage = true;
             } else if (pdfURL == null) {
                 pdfURL = arg;
+            } else if (arg.matches("\\d+")) {
+                dpi = Integer.parseInt(arg);
             } else {
                 savePath = arg;
             }
@@ -28,8 +31,7 @@ public class Main {
         }
 
         String pdfFileName = URLDownloader.downloadPDF(pdfURL, savePath);
-        URLDownloader.convertPdfToPNG(pdfFileName);
-
+        URLDownloader.convertPdfToPNG(pdfFileName, dpi);
         if (openFirstImage) {
             URLDownloader.openFirstImage(pdfFileName);
         }

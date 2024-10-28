@@ -65,16 +65,16 @@ public class URLDownloader {
         return pdfFileName;
     }
 
-    public static String convertPdfToPNG(String pdfFileName) {
+    public static String convertPdfToPNG(String pdfFileName, int dpi) {
         try {
             PDDocument  document    = Loader.loadPDF(new File(pdfFileName));
             PDFRenderer pdfRenderer = new PDFRenderer(document);
 
             for (int page = 0; page < document.getNumberOfPages(); page++) {
-                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, 300); //DPI
+                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, dpi);
                 String        imageFileName = pdfFileName.replace(".pdf", "_page_" + (page + 1) + ".png");
 
-                ImageIOUtil.writeImage(bufferedImage, imageFileName, 300); //DPI
+                ImageIOUtil.writeImage(bufferedImage, imageFileName, dpi);
             }
         } catch (IOException e){
             System.out.println("Error: " + e.getMessage());
