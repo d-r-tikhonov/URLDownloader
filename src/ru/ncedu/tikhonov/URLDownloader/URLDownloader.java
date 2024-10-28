@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
@@ -52,5 +53,22 @@ public class URLDownloader {
         }
 
         return pdfFileName;
+    }
+
+    public static void convertPdfToPNG(String pdfFileName) {
+        try {
+            PDDocument  document    = Loader.loadPDF(new File(pdfFileName));
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
+
+            for (int page = 0; page < document.getNumberOfPages(); page++) {
+                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, 300); //DPI
+                String        imageFileName = pdfFileName.replace(".pdf", "_page_" + (page + 1) + ".png");
+
+                ImageIOUtil.writeImage(bufferedImage, imageFileName, 300); //DPI
+            }
+        } catch (IOException e){
+            System.out.println("Error: " + e.getMessage());
+        }
+
     }
 }

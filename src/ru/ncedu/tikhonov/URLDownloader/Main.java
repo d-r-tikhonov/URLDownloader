@@ -1,5 +1,6 @@
 package ru.ncedu.tikhonov.URLDownloader;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main {
@@ -13,5 +14,6 @@ public class Main {
         String pdfURL = args[0];
 
         String pdfFileName = URLDownloader.downloadPDF(pdfURL);
+        URLDownloader.convertPdfToPNG(pdfFileName);
     }
 }
