@@ -1,8 +1,5 @@
 package ru.ncedu.tikhonov.URLDownloader;
 
-import java.io.File;
-import java.io.IOException;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -11,9 +8,10 @@ public class Main {
             return;
         }
 
-        String pdfURL = args[0];
+        String pdfURL   = args[0];
+        String savePath = args.length > 1 ? args[1] : URLDownloader.getDefaultFilePath();
 
-        String pdfFileName = URLDownloader.downloadPDF(pdfURL);
+        String pdfFileName = URLDownloader.downloadPDF(pdfURL, savePath);
         URLDownloader.convertPdfToPNG(pdfFileName);
     }
 }

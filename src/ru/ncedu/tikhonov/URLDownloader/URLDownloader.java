@@ -1,6 +1,5 @@
 package ru.ncedu.tikhonov.URLDownloader;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,18 +14,32 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 
 import java.awt.image.BufferedImage;
+import java.nio.file.InvalidPathException;
 
 public class URLDownloader {
 
     public static final int MAX_BUFFER_SIZE = 4096;
 
-    private static String getFileNameFromURL(String pdfURL) {
-        String fileName = pdfURL.substring(pdfURL.lastIndexOf('/') + 1).split("\\?")[0];
-        return fileName.isEmpty() ? "document.pdf" : fileName;
+    public static String getDefaultFilePath() {
+        return System.getProperty("user.home") + File.separator + "Downloads" + File.separator;
     }
 
-    public static String downloadPDF(String pdfURL){
-        String pdfFileName = getFileNameFromURL(pdfURL);
+    private static String getFileNameFromURL(String pdfURL, String savePath) {
+        String fileName      = pdfURL.substring(pdfURL.lastIndexOf('/') + 1).split("\\?")[0];
+        File   savePathFile  = new File(savePath);
+
+        if (savePathFile.isDirectory()) {
+            System.out.println("Here 1");
+            return new File(savePath, fileName).getPath();
+        } else if (!savePathFile.exists() && Utils.isValidFileName(savePath)) {
+            return new File(getDefaultFilePath(), savePath + ".pdf").getPath();
+        }
+
+        return new File(getDefaultFilePath(), fileName).getPath();
+    }
+
+    public static String downloadPDF(String pdfURL, String savePath){
+        String pdfFileName = getFileNameFromURL(pdfURL, savePath);
         URL    url         = null;
 
         try {
@@ -69,6 +82,5 @@ public class URLDownloader {
         } catch (IOException e){
             System.out.println("Error: " + e.getMessage());
         }
-
     }
 }
