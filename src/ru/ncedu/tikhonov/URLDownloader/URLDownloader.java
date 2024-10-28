@@ -1,9 +1,7 @@
 package ru.ncedu.tikhonov.URLDownloader;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,7 +27,6 @@ public class URLDownloader {
         File   savePathFile  = new File(savePath);
 
         if (savePathFile.isDirectory()) {
-            System.out.println("Here 1");
             return new File(savePath, fileName).getPath();
         } else if (!savePathFile.exists() && Utils.isValidFileName(savePath)) {
             return new File(getDefaultFilePath(), savePath + ".pdf").getPath();
@@ -68,7 +65,7 @@ public class URLDownloader {
         return pdfFileName;
     }
 
-    public static void convertPdfToPNG(String pdfFileName) {
+    public static String convertPdfToPNG(String pdfFileName) {
         try {
             PDDocument  document    = Loader.loadPDF(new File(pdfFileName));
             PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -80,6 +77,22 @@ public class URLDownloader {
                 ImageIOUtil.writeImage(bufferedImage, imageFileName, 300); //DPI
             }
         } catch (IOException e){
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return pdfFileName.replace(".pdf", "_page_" + 1 + ".png");
+    }
+
+    public static void openFirstImage(String pdfFileName) {
+        File firstFile = new File(pdfFileName.replace(".pdf", "_page_" + 1 + ".png"));
+
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(firstFile);
+            } else {
+                System.out.println("Error! Opening images is not supported on this system.");
+            }
+        } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
