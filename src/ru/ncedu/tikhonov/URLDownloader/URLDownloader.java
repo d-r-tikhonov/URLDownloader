@@ -12,7 +12,6 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 
 import java.awt.image.BufferedImage;
-import java.nio.file.InvalidPathException;
 
 public class URLDownloader {
 
@@ -65,12 +64,17 @@ public class URLDownloader {
         return pdfFileName;
     }
 
-    public static String convertPdfToPNG(String pdfFileName, int dpi) {
+    public static void convertPdfToPNG(String pdfFileName, int dpi, int startPage, int endPage) {
         try {
             PDDocument  document    = Loader.loadPDF(new File(pdfFileName));
             PDFRenderer pdfRenderer = new PDFRenderer(document);
 
-            for (int page = 0; page < document.getNumberOfPages(); page++) {
+            int totalPages = document.getNumberOfPages();
+
+            startPage = Math.max(1, startPage);
+            endPage   = Math.min(totalPages, endPage);
+
+            for (int page = startPage - 1; page < endPage; page++) {
                 BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(page, dpi);
                 String        imageFileName = pdfFileName.replace(".pdf", "_page_" + (page + 1) + ".png");
 
@@ -79,8 +83,6 @@ public class URLDownloader {
         } catch (IOException e){
             System.out.println("Error: " + e.getMessage());
         }
-
-        return pdfFileName.replace(".pdf", "_page_" + 1 + ".png");
     }
 
     public static void openFirstImage(String pdfFileName) {
